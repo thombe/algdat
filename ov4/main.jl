@@ -27,23 +27,25 @@ function counting_sort_length(A)
         end
     end
 
-    C = zeros(Int , k)
+    C = zeros(Int , k+1)
     B = deepcopy(A)
 
-    for j = 1:length(A)
-        C[length(A[j])] += 1
+    for j = 1:(length(A))
+        C[length(A[j])+1] += 1
     end
-
-    for i = 2:k
-        C[i] += C[i-1]
+    println(C)
+    for i = 2:k+1
+        C[i] = C[i] +  C[i-1]
     end
+    println(C)
 
     for j = length(A):-1:1
-        B[C[length(A[j])]] = A[j]
-        C[length(A[j])] -= 1
+        B[C[length(A[j])+1]] = A[j]
+        C[length(A[j])+1] -= 1
     end
     return B
 end
 
-A = ["bbbb" , "aa" , "aaaa" , "ccc"]
-counting_sort_length(A)
+A = ["bbbb", "aa", "aaaa", "ccc"]
+println(A)
+println(counting_sort_length(A))
