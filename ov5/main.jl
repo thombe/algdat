@@ -1,3 +1,9 @@
+struct Node
+    children::Dict{Char,Node}
+    posi::Array{Int}
+end
+Node() = Node(Dict(),[])
+
 function parse_string(sentence::String)::Array{Tuple{String,Int}}
     A = []
     s = 1
@@ -13,4 +19,8 @@ function parse_string(sentence::String)::Array{Tuple{String,Int}}
     end
     return A
 end
-println(parse_string("hei test thomas er pro"))
+
+function build(list_of_words::Array{Tuple{String,Int}})::Node
+end
+
+new_node = Node()
