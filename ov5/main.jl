@@ -20,7 +20,13 @@ function parse_string(sentence::String)::Array{Tuple{String,Int}}
     return A
 end
 
+function max_heapify(A , i)
+    l = A[i].
+end
+
+
 function build(list_of_words::Array{Tuple{String,Int}})::Node
+    heap = []
 end
 
 new_node = Node()
