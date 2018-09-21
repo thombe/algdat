@@ -19,14 +19,54 @@ function parse_string(sentence::String)::Array{Tuple{String,Int}}
     end
     return A
 end
-
-function max_heapify(A , i)
-    l = A[i].
+#=
+function left(i)
+    return 2*i
 end
 
+function rigth(i)
+    return 2*i + 1
+end
 
+function max_heapify(heap , i)
+    l = left(i)
+    r = rigth(i)
+    if l <= length(heap) && heap[l] > heap[i]
+        m = l
+    else
+        m = i
+    end
+
+    if r < length(heap) && heap[r] > heap[m]
+        m = r
+    end
+
+    if m != i
+        temp = deepcopy(heap[i])
+        heap[i] = heap[m]
+        heap[m] = temp
+
+        max_heapify(heap , m)
+    end
+
+
+end
+
+=#
 function build(list_of_words::Array{Tuple{String,Int}})::Node
-    heap = []
+
+    for word in list_of_words
+        for char in word[1]
+            println(char)
+        end
+    end
+
+
+    new_node = Node()
+    return new_node
 end
 
 new_node = Node()
+
+A = parse_string("algdat er et hardt fag")
+build(A)
