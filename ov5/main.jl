@@ -19,54 +19,104 @@ function parse_string(sentence::String)::Array{Tuple{String,Int}}
     end
     return A
 end
-#=
-function left(i)
-    return 2*i
-end
 
-function rigth(i)
-    return 2*i + 1
-end
-
-function max_heapify(heap , i)
-    l = left(i)
-    r = rigth(i)
-    if l <= length(heap) && heap[l] > heap[i]
-        m = l
-    else
-        m = i
-    end
-
-    if r < length(heap) && heap[r] > heap[m]
-        m = r
-    end
-
-    if m != i
-        temp = deepcopy(heap[i])
-        heap[i] = heap[m]
-        heap[m] = temp
-
-        max_heapify(heap , m)
-    end
-
-
-end
-
-=#
-function build(list_of_words::Array{Tuple{String,Int}})::Node
-
-    for word in list_of_words
-        for char in word[1]
-            println(char)
+function place_words(node::Node , word::Tuple{String,Int})
+    for i = 1:length(word[1])
+        char = word[1][i]
+        if haskey(node.children , char)
+            node = node.children[char]
+        else
+            node.children[char] = Node()
+            node = node.children[char]
         end
+
+        if i == length(word[1])
+            push!(node.posi , word[2])
+
+        end
+
     end
 
+end
 
-    new_node = Node()
-    return new_node
+
+function build(list_of_words::Array{Tuple{String,Int}})::Node
+    top_node = Node()
+    for word in list_of_words
+        place_words(top_node , word)
+    end
+    return top_node
 end
 
 new_node = Node()
 
-A = parse_string("algdat er et hardt fag")
-build(A)
+A = parse_string("ha ha mons har en hund med moms hun er en hunn")
+B = build(A)
+
+function print_tree(node::Node, tabs::Int)
+    for children in keys(node.children)
+        for i = 1:tabs
+            print('\t')
+        end
+        print( children )
+        for char in children
+            print_tree(node.children[char], tabs)
+            tabs += 1
+            println()
+        end
+    end
+
+end
+
+
+function positio(word, node , A , index=1)
+    if length(word) == index
+        println("length eq index")
+    end
+
+
+
+    for num in node.posi
+        if length(word) == index
+            println("returning")
+            push!(A, num)
+            return
+        end
+    end
+
+    #=
+    println("legth: " , length(word))
+    println("index: " , index)
+    if length(word) == index
+        println("length eq index")
+        for num in node.posi
+            println("num: " , num)
+            println(typeof(node.posi))
+            push!(A , num)
+        end
+        return
+    end
+    =#
+
+    for char in keys(node.children)
+        if word[index] == char || word[index] == '?'
+            node = node.children[char]
+            index += 1
+            positio(word , node , A , index)
+            break
+        end
+
+    end
+
+end
+
+function positions(word, node , index=1)
+    A = []
+    positio(word , node ,A , index)
+    return A
+end
+
+C = positions("ha" , B , 1)
+for num in C
+    println(num)
+end
