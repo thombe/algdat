@@ -69,7 +69,6 @@ function back_track(path_weigths)
 
     for i = rows-1:-1:1 #looping rest of rows
         if pos == 1
-#            println("pos is 1")
             m = path_weigths[i , 1]
             for j = 1:pos+1
                 if path_weigths[i,j] < m
@@ -78,31 +77,25 @@ function back_track(path_weigths)
                 end
             end
         elseif pos == cols
-            println("pos is cols")
             m = path_weigths[i , pos-1] #start checking one the first valid pos
-            pos -= 1
-            for j = pos-1:pos
+            pos = pos - 1
+            for j = pos:cols
                 if path_weigths[i,j] < m
                     m = path_weigths[i,j]
                     pos = j
                 end
             end
         else
-            #println("pos is not edge")
             m = path_weigths[i , pos-1]
             pos -= 1
-            #println("m is sat to: " , m)
             for j = pos:pos+2
                 if path_weigths[i,j] < m
-            #        println("Found lower value as pos: " , j)
                     m = path_weigths[i,j]
                     pos = j
-            #        println("pos is now: " , pos)
                 end
             end
         end
         push!(R , (i,pos))
-#        println()
     end
 
     return R
