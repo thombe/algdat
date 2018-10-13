@@ -9,14 +9,19 @@ Node(id) = Node(id, [], nothing, nothing, nothing)
 
 
 function makenodelist(adjacencylist)
-    id = 1
-    R = []
-    for adj in adjacencylist
-        n = Node(id)
-        push!(n.neighbours, adj)
-        push!(R, n)
+    nodes = []
+    for i = 1:length(adjacencylist)
+        n = Node(i)
+        push!(nodes , n)
     end
-    return R
+
+    for i = 1:length(adjacencylist)
+        for id in adjacencylist[i]
+            push!(nodes[i].neighbours , nodes[id])
+        end
+
+    end
+    return nodes
 end
 
 
@@ -48,7 +53,7 @@ function runmanytests(;maxlistsize=15)
     for n = 1:maxlistsize
         for degree = 1:n
             adjacencylist = generateadjacencylist(n, degree)
-            @info "Listelendge $n" n, degree #, adjacencylist
+            #@info "Listelendge $n" n, degree #, adjacencylist
             makenodelist(adjacencylist)
         end
     end
@@ -56,4 +61,4 @@ end
 
 
 main()
-#runmanytests()
+runmanytests()
