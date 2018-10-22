@@ -22,9 +22,17 @@ function link(x::DisjointSetNode, y::DisjointSetNode)
     end
 end
 
-function union!(x::DisjointSetNode, y::DisjointSetNode)
+function unionn!(x::DisjointSetNode, y::DisjointSetNode)
     link(findset(x), findset(y))
 end
+function findnodes(x::DisjointSetNode)
+    R = []
+    if x.p != x
+        return x.p
+    end
+    return Nothing
+end
+
 
 function hammingdistance(s1::String, s2::String)
     r = 0
@@ -39,27 +47,36 @@ end
 function findclusters(E::Vector{Tuple{Int, Int, Int}}, n::Int, k::Int)
     R = []
     nodes = []
-    for edge in E
-        for n in nodes
-            if edge[2] != n.u
-                node = DisjointSetNode()
-                node.p = node
-                node.rank = 0
-                push!(node, nodes)
-            end
-        end
+    picked = []
+    for i = 1:n
+        node = DisjointSetNode()
+        node.p = node
+        node.rank = 0
+        push!(nodes,node)
+        push!(picked,[])
     end
     sort!(E)
+    trees = n
+    println("picked is now " ,picked)
     for i = 1:length(E)
         u = E[i][2]
         v = E[i][3]
         if findset(nodes[u]) != findset(nodes[v])
-            push!((u,v), R)
-            union(nodes[u], nodes[v])
-            if length(R) == k
-                return R
+            unionn!(nodes[u], nodes[v])
+            #push!(R , [u,v])
+            push!(picked[u],v)
+            trees -= 1
+            if trees == k
+                break
             end
+        end
+    end
+    for u in picked
+        if !isempty(u)
+            push!(R,u)
         end
     end
     return R
 end
+E = [(5,1,2),(3,1,3), (4,3,4), (1,2,3), (2,4,1), (6,1,5) , (7,2,4)]
+println(findclusters(E,5,1))
