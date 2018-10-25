@@ -22,7 +22,7 @@ function link(x::DisjointSetNode, y::DisjointSetNode)
     end
 end
 
-function unionn!(x::DisjointSetNode, y::DisjointSetNode)
+function union!(x::DisjointSetNode, y::DisjointSetNode)
     link(findset(x), findset(y))
 end
 function findnodes(x::DisjointSetNode)
@@ -50,7 +50,6 @@ function findclusters(E::Vector{Tuple{Int, Int, Int}}, n::Int, k::Int)
         push!(R,[])
     end
     nodes = []
-    edges = []
 
     for i = 1:n
         node = DisjointSetNode()
@@ -68,8 +67,7 @@ function findclusters(E::Vector{Tuple{Int, Int, Int}}, n::Int, k::Int)
         u = E[i][2]
         v = E[i][3]
         if findset(nodes[u]) != findset(nodes[v])
-            unionn!(nodes[u], nodes[v])
-            push!(edges,E[i])
+            union!(nodes[u], nodes[v])
             trees -= 1
         end
     end
@@ -96,12 +94,10 @@ function findanimalgroups(animals::Vector{Tuple{String, String}}, k::Int64)
         end
     end
     R = findclusters(E,length(animals) , k)
-    println(R)
     F = []
     for i = 1:k
         push!(F,[])
     end
-    println(F)
     for i = 1:length(R)
         for j = 1:length(R[i])
             push!(F[i],animals[R[i][j]][1])
