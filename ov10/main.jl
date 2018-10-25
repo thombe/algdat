@@ -19,23 +19,32 @@ function initialize_single_source!(graph, start)
 end
 
 function relax!(from_node,to_node,cost)
-    if to_node.risk > (from_node.risk + cost/to_node.probability) #migth be faster to store the value
-        to_node.risk = from_node.risk + cost/to_node.probability
+    w = from_node.risk + cost/to_node.probability
+    if to_node.risk > w
+        to_node.risk = w
         to_node.predecessor = from_node
     end
 end
 
 function dijkstra!(graph,start)
     initialize_single_source!(graph, start)
-    S = []
-    Q = PriorityQueue{Node, Float64}(Base.Order.Reverse)
+    Q = PriorityQueue{Node, Float64}()
+    visited = Set()
     enqueue!(Q , start , 0.0)
     while !isempty(Q)
         from_node = dequeue!(Q)
-        push!(S , from_node)
-        for neighbournode in from_node.neighbours
-            relax!(from_node, neighbournode[1], neighbournode[2])
-            enqueue!(Q,neighbournode[1],neighbournode[1].risk)
+        push!(visited,from_node)
+
+        for (to_node,cost) in from_node.neighbours
+            relax!(from_node, to_node,cost)
+            if !in(to_node, visited)
+                if !haskey(Q,to_node)
+                    enqueue!(Q,to_node,to_node.risk)
+                end
+                if to_node.risk < Q[to_node]
+                    Q[to_node] = to_node.risk
+                end
+            end
         end
     end
 end
@@ -61,4 +70,38 @@ n5.neighbours = [(n2,9),(n3,8)]
 
 grph = [n1 , n2 , n3 , n4 , n5]
 
-dijkstra!(grph,n3)
+dijkstra!(grph,n5)
+
+function bellman_ford!(graph,start)
+    initialize_single_source!(graph,start)
+    for g = 1:length(graph)-1
+        for u in graph
+
+            for (v,w) in u.neighbours
+                relax!(u,v,w)
+            end
+
+        end
+    end
+    for u in graph
+        for (v,w) in u.neighbours
+            if v.risk > (u.risk + (w/v.probability))
+                return false
+            end
+        end
+    end
+    return true
+end
+
+n1.probability = 1.0
+n2.probability = 1.0
+n3.probability = 1.0
+n4.probability = 1.0
+
+n1.neighbours = [(n3,3)]
+n2.neighbours = []
+n3.neighbours = [(n4,4)]
+n4.neighbours = [(n1,4)]
+
+grph = [n1 , n2 , n3 , n4]
+bellman_ford!(grph,n4)
